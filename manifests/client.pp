@@ -65,4 +65,13 @@ class backuppc::client (
   Ssh_authorized_key <<| tag == "backuppc_${domain}" |>> {
     require => File["${home_directory}/.ssh"]
   }
+
+  file { '/etc/sudoers.d/backup':
+    ensure  => present,
+    owner   => 'root',
+    group   => 'root',
+    mode    => 440,
+    content => "backup ALL=(ALL:ALL) NOPASSWD: /usr/bin/rsync\n",
+    require => Package['sudo']
+  }
 }
