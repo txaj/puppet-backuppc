@@ -380,7 +380,11 @@ $Conf{BackupFilesOnly} = undef;
 #       '*' => ['/junk', '/dont_back_this_up'], # these are for other shares
 #    };
 #
-$Conf{BackupFilesExclude} = ['/proc', '/mnt', '/dev', '/sys', '/tmp'];
+$Conf{BackupFilesExclude} = [
+<% exclude.each do |ex| -%>
+  '<%= ex -%>',
+<% end -%>
+];
 
 #
 # PCs that are always or often on the network can be backed up after
