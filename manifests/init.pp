@@ -46,7 +46,8 @@ class backuppc inherits backuppc::params {
   file { $config_directory:
     ensure  => present,
     owner   => 'backuppc',
-    group   => 'www-data'
+    group   => 'www-data',
+    require => Package[$package]
   }
   
   exec { 'backuppc-ssh-keygen':
@@ -56,17 +57,17 @@ class backuppc inherits backuppc::params {
   }
 
   # Export backuppc's authorized key to all clients
-  @@ssh_authorized_key { "backuppc_${fqdn}":
+  @@ssh_authorized_key { "backuppc_${::fqdn}":
     ensure  => present,
     key     => $::backuppc_pubkey_rsa,
-    name    => "backuppc_${fqdn}",
+    name    => "backuppc_${::fqdn}",
     user    => 'backup',
     options => [
       "from=\"${ipaddress}\"",
       'command="/var/backups/backuppc.sh"'
     ],
     type    => 'ssh-rsa',
-    tag     => "backuppc_${domain}",
+    tag     => "backuppc_${::domain}",
   }
   
   # Hosts
@@ -82,7 +83,7 @@ class backuppc inherits backuppc::params {
     order   => 01,
   }
   
-  File <<| tag == "backuppc_pc_${domain}" |>>
-  File <<| tag == "backuppc_config_${domain}" |>>
-  Concat::Fragment <<| tag == "backuppc_hosts_${domain}" |>>
+  File <<| tag == "backuppc_pc_${::domain}" |>>
+  File <<| tag == "backuppc_config_${::domain}" |>>
+  Concat::Fragment <<| tag == "backuppc_hosts_${::domain}" |>>
 }
