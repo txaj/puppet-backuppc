@@ -39,30 +39,32 @@ class backuppc::client (
     group   => 'backup',
   }
   
-  @@concat::fragment { "backuppc_host_${fqdn}":
+  @@concat::fragment { "backuppc_host_${::fqdn}":
     target  => '/etc/backuppc/hosts',
-    content => "${fqdn} 0 backuppc\n",
-    tag     => "backuppc_hosts_${domain}"
+    content => "${::fqdn} 0 backuppc\n",
+    notify  => Service[$service],
+    tag     => "backuppc_hosts_${::domain}"
   }
   
-  @@file { "${topdir}/pc/${fqdn}":
+  @@file { "${topdir}/pc/${::fqdn}":
     ensure  => directory,
     owner   => 'backuppc',
     group   => 'backuppc',
     mode    => 0750,
-    tag     => "backuppc_pc_${domain}",
+    tag     => "backuppc_pc_${::domain}",
   }
   
-  @@file { "${topdir}/pc/${fqdn}/config.pl":
+  @@file { "${topdir}/pc/${::fqdn}/config.pl":
     ensure  => present,
     content => template("${module_name}/host.pl.erb"),
     owner   => 'backuppc',
     group   => 'www-data',
     mode    => '0740',
-    tag     => "backuppc_config_${domain}"
+    notify  => Service[$service],
+    tag     => "backuppc_config_${::domain}",
   }
-  
-  Ssh_authorized_key <<| tag == "backuppc_${domain}" |>> {
+
+  Ssh_authorized_key <<| tag == "backuppc_${::domain}" |>> {
     require => File["${home_directory}/.ssh"]
   }
 
