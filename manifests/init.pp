@@ -15,7 +15,7 @@ class backuppc inherits backuppc::params {
   include concat::setup
   
   # Set up dependencies
-  Package[$package] -> Service[$service] -> File[$config]
+  Package[$package] -> File[$config] -> Service[$service]
 
   # Include preseeding for debian packages
   case $operatingsystem {
@@ -30,7 +30,9 @@ class backuppc inherits backuppc::params {
   }
 
   service { $service:
-    ensure  => running,
+    ensure    => running,
+    hasstatus => false,
+    pattern   => 'BackupPC'
   }
 
   file { $config:
