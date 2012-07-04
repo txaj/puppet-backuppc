@@ -978,7 +978,9 @@ $Conf{RsyncArgs} = [
 #             '--exclude-from=$confDir/pc/$host.exclude',
 #     ];
 #
-$Conf{RsyncArgsExtra} = [];
+$Conf{RsyncArgsExtra} = [
+  '--exclude-from=$confDir/pc/$host/exclude.list',
+];
 
 #
 # Arguments to rsync for restore.  Do not edit the first set unless you
