@@ -31,7 +31,7 @@ class backuppc::client (
     mode    => '0755',
     source  => "puppet:///modules/${module_name}/client/backuppc.sh"
   }
-  
+
   file { "${home_directory}/.ssh":
     ensure  => directory,
     mode    => 0700,
@@ -39,6 +39,14 @@ class backuppc::client (
     group   => 'backup',
   }
   
+
+  @@concat { "${topdir}/pc/${::fqdn}/exclude.list":
+    owner => 'backuppc',
+    group => 'backuppc',
+    mode  => 0750,
+    tag   => "backuppc_exclude_${::domain}"
+  }
+
   @@concat::fragment { "backuppc_host_${::fqdn}":
     target  => '/etc/backuppc/hosts',
     content => "${::fqdn} 0 backuppc\n",
@@ -61,9 +69,9 @@ class backuppc::client (
     group   => 'www-data',
     mode    => '0740',
     notify  => Service[$service],
-    tag     => "backuppc_config_${::domain}",
+    tag     => "backuppc_config_${::domain}"
   }
-
+  
   Ssh_authorized_key <<| tag == "backuppc_${::domain}" |>> {
     require => File["${home_directory}/.ssh"]
   }

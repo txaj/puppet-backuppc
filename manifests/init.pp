@@ -63,7 +63,7 @@ class backuppc inherits backuppc::params {
     name    => "backuppc_${::fqdn}",
     user    => 'backup',
     options => [
-      "from=\"${ipaddress}\"",
+      "from=\"${::ipaddress}\"",
       'command="/var/backups/backuppc.sh"'
     ],
     type    => 'ssh-rsa',
@@ -86,4 +86,7 @@ class backuppc inherits backuppc::params {
   File <<| tag == "backuppc_pc_${::domain}" |>>
   File <<| tag == "backuppc_config_${::domain}" |>>
   Concat::Fragment <<| tag == "backuppc_hosts_${::domain}" |>>
+
+  Concat <<| tag == "backuppc_exclude_${::domain}" |>>
+  Concat::Fragment <<| tag == "backuppc_exclude_${::domain}" |>>
 }
