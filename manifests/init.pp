@@ -77,6 +77,13 @@ class backuppc inherits backuppc::params {
     mode  => 0750
   }
   
+  # FIXME: we use a custom fact to setup concat ...
+  create_resources('concat', $backuppc_hosts, {
+    owner => 'backuppc',
+    group => 'backuppc',
+    mode  => 0750
+  })
+
   concat::fragment { 'hosts_header':
     target  => '/etc/backuppc/hosts',
     content => "host        dhcp    user    moreUsers     # <--- do not edit this line\n",
