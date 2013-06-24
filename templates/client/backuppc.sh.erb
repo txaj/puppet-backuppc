@@ -5,7 +5,7 @@
 #
 
 case "${SSH_ORIGINAL_COMMAND}" in
-/usr/bin/rsync\ --server*)
+  /usr/bin/rsync\ * | <%= scope.lookupvar('backuppc::params::tar_path') %>\ * )
   sudo ${SSH_ORIGINAL_COMMAND}
   ;;
 *)
