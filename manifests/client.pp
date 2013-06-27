@@ -306,7 +306,8 @@ class backuppc::client (
       managehome => true,
       shell      => '/bin/bash',
       comment    => 'BackupPC',
-      system     => true
+      system     => true,
+      password   => sha1("tyF761_${::fqdn}${::uniqueid}")
     }
 
     file { "${system_home_directory}/.ssh":
