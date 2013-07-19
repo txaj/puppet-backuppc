@@ -23,6 +23,11 @@
 # [*system_home_directory*]
 # Absolute path to the home directory of the system account.
 #
+# [*system_additional_commands*]
+# Additional sudo commands to whitelist for the system_account. This
+# is useful if you need to execute any pre dump commands on client before
+# backup.
+#
 # [*manage_sudo*]
 # Boolean. Set to true to configure and install sudo and the
 # sudoers.d directory. Defaults to false and is only applied
@@ -181,6 +186,7 @@ class backuppc::client (
   $backuppc_hostname     = '',
   $system_account        = 'backup',
   $system_home_directory = '/var/backups',
+  $system_additional_commands = [],
   $manage_sudo           = false,
   $manage_rsync          = true,
   $full_period           = false,
@@ -292,12 +298,19 @@ class backuppc::client (
       }
     }
 
+    if ! empty($system_additional_commands) {
+      $additional_sudo_commands = join($system_additional_commands, ', ')
+      $sudo_commands = "${sudo_command}, ${system_additional_commands}"
+    } else {
+      $sudo_commands = $sudo_command
+    }
+
     file { '/etc/sudoers.d/backuppc':
       ensure  => $ensure,
       owner   => 'root',
       group   => 'root',
       mode    => '0440',
-      content => "${system_account} ALL=(ALL:ALL) NOPASSWD: ${sudo_command}\n",
+      content => "${system_account} ALL=(ALL:ALL) NOPASSWD: ${sudo_commands}\n",
     }
 
     user { $system_account:
