@@ -324,7 +324,6 @@ class backuppc::client (
 	      system     => true,
 	      password   => '*',
 	  }
-	}
       }
       'RedHat': {
 	  user { $system_account:
