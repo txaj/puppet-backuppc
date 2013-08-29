@@ -45,6 +45,10 @@
 # PC is not on the network, a number of consecutive bad pings is allowed
 # before the good ping count is reset.
 #
+# [*ping_max_msec*]
+# Maximum latency between backuppc server and client to schedule 
+# a backup. Default to 20ms.
+# 
 # [*backups_disable*]
 # Disable all full and incremental backups. These settings are useful for a client that
 # is no longer being backed up (eg: a retired machine), but you wish to keep the last backups
@@ -199,6 +203,7 @@ class backuppc::client (
   $incr_fill             = false,
   $partial_age_max       = false,
   $blackout_bad_ping_limit = false,
+  $ping_max_msec         = 20,
   $blackout_good_cnt     = false,
   $backups_disable       = false,
   $xfer_method           = 'rsync',

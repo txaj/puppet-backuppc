@@ -33,6 +33,9 @@ $Conf{PartialAgeMax} = <%= @partial_age_max %>;
 <% if @blackout_bad_ping_limit -%>
 $Conf{BlackoutBadPingLimit} = <%= @blackout_bad_ping_limit %>;
 <% end -%>
+<% if @ping_max_msec -%>
+$Conf{PingMaxMsec} = <%= @ping_max_msec %>;
+<% end -%>
 <% if @blackout_good_cnt -%>
 $Conf{BlackoutGoodCnt}      = <%= @blackout_good_cnt %>;
 <% end -%>
