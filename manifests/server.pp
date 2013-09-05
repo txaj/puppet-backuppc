@@ -389,7 +389,11 @@ class backuppc::server (
       name    => "backuppc_${::fqdn}",
       user    => 'backup',
       options => [
-        'command="~/backuppc.sh"'
+        'command="~/backuppc.sh"',
+        'no-agent-forwarding',
+        'no-port-forwarding',
+        'no-pty',
+        'no-X11-forwarding',
       ],
       type    => 'ssh-rsa',
       tag     => "backuppc_${::fqdn}",

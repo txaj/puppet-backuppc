@@ -25,6 +25,14 @@
 #
 # [*system_additional_commands*]
 # Additional sudo commands to whitelist for the system_account. This
+# is useful if you need to execute any pre dump *scripts* on client before
+# backup. Please prefer system_additional_commands_noexec if you want
+# to whitelist a single command/binary since commands specified here
+# are going to be allowed without the NOEXEC options. See man sudoers
+# for details.
+#
+# [*system_additional_commands_noexec*]
+# Additional sudo commands to whitelist for the system_account. This
 # is useful if you need to execute any pre dump commands on client before
 # backup.
 #
@@ -46,9 +54,9 @@
 # before the good ping count is reset.
 #
 # [*ping_max_msec*]
-# Maximum latency between backuppc server and client to schedule 
+# Maximum latency between backuppc server and client to schedule
 # a backup. Default to 20ms.
-# 
+#
 # [*backups_disable*]
 # Disable all full and incremental backups. These settings are useful for a client that
 # is no longer being backed up (eg: a retired machine), but you wish to keep the last backups
@@ -191,6 +199,7 @@ class backuppc::client (
   $system_account        = 'backup',
   $system_home_directory = '/var/backups',
   $system_additional_commands = [],
+  $system_additional_commands_noexec = [],
   $manage_sudo           = false,
   $manage_rsync          = true,
   $full_period           = false,
@@ -279,10 +288,10 @@ class backuppc::client (
           ensure => installed,
         }
       }
-      $sudo_command = '/usr/bin/rsync'
+      $sudo_command_noexec = '/usr/bin/rsync'
     }
     else {
-      $sudo_command = $backuppc::params::tar_path
+      $sudo_command_noexec = $backuppc::params::tar_path
     }
 
     if $manage_sudo {
@@ -305,12 +314,31 @@ class backuppc::client (
 
     if ! empty($system_additional_commands) {
       $additional_sudo_commands = join($system_additional_commands, ', ')
-      $sudo_commands = "${sudo_command}, ${system_additional_commands}"
-    } else {
-      $sudo_commands = $sudo_command
+      $sudo_commands = "${additional_sudo_commands}"
     }
 
-    file { '/etc/sudoers.d/backuppc':
+    if ! empty($system_additional_commands_noexec) {
+      $additional_sudo_commands_noexec = join($system_additional_commands_noexec, ', ')
+      $sudo_commands_noexec = "${sudo_command_noexec}, ${additional_sudo_commands_noexec}"
+    } else {
+      $sudo_commands_noexec = $sudo_command_noexec
+    }
+
+    if ! empty($sudo_commands) {
+      file { '/etc/sudoers.d/backuppc':
+        ensure  => $ensure,
+        owner   => 'root',
+        group   => 'root',
+        mode    => '0440',
+        content => "${system_account} ALL=(ALL:ALL) NOPASSWD: ${sudo_commands}\n",
+      }
+    } else {
+      file { '/etc/sudoers.d/backuppc':
+        ensure  => 'absent',
+      }
+    }
+
+    file { '/etc/sudoers.d/backuppc_noexec':
       ensure  => $ensure,
       owner   => 'root',
       group   => 'root',
@@ -320,30 +348,30 @@ class backuppc::client (
 
     case $::osfamily {
       'Debian': {
-	user { $system_account:
-	      ensure     => $ensure,
-	      home       => $system_home_directory,
-	      managehome => true,
-	      shell      => '/bin/bash',
-	      comment    => 'BackupPC',
-	      system     => true,
-	      password   => '*',
-	  }
+        user { $system_account:
+          ensure     => $ensure,
+          home       => $system_home_directory,
+          managehome => true,
+          shell      => '/bin/bash',
+          comment    => 'BackupPC',
+          system     => true,
+          password   => '*',
+        }
       }
       'RedHat': {
-	  user { $system_account:
-		ensure     => $ensure,
-		home       => $system_home_directory,
-		managehome => true,
-		shell      => '/bin/bash',
-		comment    => 'BackupPC',
-		system     => true,
-		password   => '!!',
-	  }
+        user { $system_account:
+          ensure     => $ensure,
+          home       => $system_home_directory,
+          managehome => true,
+          shell      => '/bin/bash',
+          comment    => 'BackupPC',
+          system     => true,
+          password   => '!!',
+        }
       }
       default: {
-	   notify { "If you've added support for ${::operatingsystem} you'll need to extend this case statement to.":
-	}
+        notify { "If you've added support for ${::operatingsystem} you'll need to extend this case statement to.":
+        }
       }
     }
 
