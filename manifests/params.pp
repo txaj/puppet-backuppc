@@ -20,7 +20,11 @@ class backuppc::params {
       $cgi_image_dir      = "${install_directory}/image"
       $cgi_image_dir_url  = '/backuppc/image'
       $log_directory      = '/var/lib/backuppc/log'
-      $config_apache      = '/etc/apache2/conf.d/backuppc.conf'
+      if ($::operatingsystemmajrelease == 6) {
+        $config_apache      = '/etc/backuppc/apache.conf'
+      } else {
+        $config_apache      = '/etc/apache2/conf.d/backuppc.conf'
+      }
       $group_apache       = 'www-data'
       $par_path           = '/usr/bin/par2\' if -x \'/usr/bin/par2'
       $gzip_path          = '/bin/gzip'
