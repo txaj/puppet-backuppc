@@ -98,6 +98,7 @@ the paths you sepcify. The example uses sudo which is not configured in the modu
 * Storeconfigs need to be enabled for this module to work.
 * There is a TODO for generating and installing the server's ssh key. Currently it relies on a facter value that is only present on the second run of puppet.
 * Since Puppet does not support HOPing a process, backuppc will be restarted each time the master configuration changes. This causes active tasks to be stopped. 
+<<<<<<< HEAD
 
 ## Contributors
 * [txaj](https://github.com/txaj)
