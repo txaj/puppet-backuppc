@@ -349,33 +349,14 @@ class backuppc::client (
       content => "${system_account} ALL=(ALL:ALL) NOEXEC:NOPASSWD: ${sudo_commands_noexec}\n",
     }
 
-    case $::osfamily {
-      'Debian': {
-        user { $system_account:
-          ensure     => $ensure,
-          home       => $system_home_directory,
-          managehome => true,
-          shell      => '/bin/bash',
-          comment    => 'BackupPC',
-          system     => true,
-          password   => '*',
-        }
-      }
-      'RedHat': {
-        user { $system_account:
-          ensure     => $ensure,
-          home       => $system_home_directory,
-          managehome => true,
-          shell      => '/bin/bash',
-          comment    => 'BackupPC',
-          system     => true,
-          password   => '!!',
-        }
-      }
-      default: {
-        notify { "If you've added support for ${::operatingsystem} you'll need to extend this case statement to.":
-        }
-      }
+    user { $system_account:
+      ensure     => $ensure,
+      home       => $system_home_directory,
+      managehome => true,
+      shell      => '/bin/bash',
+      comment    => 'BackupPC',
+      system     => true,
+      password   => sha1("tyF761_${::fqdn}${::uniqueid}"),
     }
 
     file { "${system_home_directory}/.ssh":
