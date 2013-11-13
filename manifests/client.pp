@@ -215,7 +215,7 @@ class backuppc::client (
   $incr_fill             = false,
   $partial_age_max       = false,
   $blackout_bad_ping_limit = false,
-  $ping_max_msec         = 20,
+  $ping_max_msec         = false,
   $blackout_good_cnt     = false,
   $backups_disable       = false,
   $xfer_method           = 'rsync',
