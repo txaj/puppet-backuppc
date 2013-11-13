@@ -1,5 +1,5 @@
 name    'wyrie-backuppc'
-version '0.1.3'
+version '0.1.4'
 source 'https://github.com/wyrie/puppet-backuppc'
 author 'Scott Barr'
 license 'Apache2'
