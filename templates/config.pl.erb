@@ -210,7 +210,7 @@ $Conf{EMailNotifyOldOutlookDays} = 5.0;
 $Conf{EMailOutlookBackupSubj} = undef;
 $Conf{EMailOutlookBackupMesg} = undef;
 $Conf{EMailHeaders} = <<EOF;
-<% @email_headers.each_pair do |header,value| -%>
+<% @email_headers.sort_by {|key,value| key}.each do |header,value| -%>
 <%= header %>: <%= value %>
 <% end -%>
 EOF
