@@ -388,12 +388,12 @@ class backuppc::client (
     }
   }
 
-  @@file_line { "backuppc_host_${::fqdn}":
-    ensure  => $ensure,
-    path    => $backuppc::params::hosts,
-    match   => "^${::fqdn}.*$",
-    line    => "${::fqdn} ${hosts_file_dhcp} backuppc ${hosts_file_more_users}\n",
+  @@concat::fragment { "backuppc_host_${::fqdn}":
+    ensure  => present,
+    target  => $backuppc::params::hosts,
+    content => "${::fqdn} ${hosts_file_dhcp} backuppc ${hosts_file_more_users}\n",
     tag     => "backuppc_hosts_${backuppc_hostname}",
+    order   => '10',
   }
 
   @@file { "${backuppc::params::config_directory}/pc/${::fqdn}.pl":
