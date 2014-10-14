@@ -406,7 +406,20 @@ class backuppc::server (
     notify  => Service[$backuppc::params::service],
     require => File["${backuppc::params::config_directory}/pc"],
   }
-  File_line <<| tag == "backuppc_hosts_${::fqdn}" |>> {
+  concat { $backuppc::params::hosts:
+    owner          => 'root',
+    group          => 'root',
+    mode           => '0644',
+    warn           => true,
+    ensure_newline => true,
+    notify         => Service[$backuppc::params::service],
+  }
+  concat::fragment { 'backuppc_hosts_header':
+    target  => $backuppc::params::hosts,
+    content => 'host dhcp user moreUsers',
+    order   => '00',
+  }
+  Concat::Fragment <<| tag == "backuppc_hosts_${::fqdn}" |>> {
     require => Package[$backuppc::params::package],
   }
 
