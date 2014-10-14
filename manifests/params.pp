@@ -30,6 +30,7 @@ class backuppc::params {
       $gzip_path          = '/bin/gzip'
       $bzip2_path         = '/bin/bzip2'
       $tar_path           = '/bin/tar'
+      $nullpassword       = '*'
     }
     'RedHat': {
       $package            = 'BackupPC'
@@ -49,6 +50,7 @@ class backuppc::params {
       $gzip_path          = '/usr/bin/gzip'
       $bzip2_path         = '/usr/bin/bzip2'
       $tar_path           = '/bin/gtar'
+      $nullpassword       = '!!'
     }
     default: {
       fail("Operating system ${::operatingsystem} is not supported by this module")

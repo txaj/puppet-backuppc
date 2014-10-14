@@ -353,14 +353,7 @@ class backuppc::client (
       shell      => '/bin/bash',
       comment    => 'BackupPC',
       system     => true,
-      password   => sha1("tyF761_${::fqdn}${::uniqueid}"),
-    }
-
-    file { $system_home_directory:
-      ensure  => directory,
-      owner   => $system_account,
-      group   => $system_account,
-      require => User[$system_account],
+      password   => $nullpassword,
     }
 
     file { "${system_home_directory}/.ssh":
@@ -368,6 +361,7 @@ class backuppc::client (
       mode    => '0700',
       owner   => $system_account,
       group   => $system_account,
+      require => User[$system_account],
     }
 
     file { "${system_home_directory}/backuppc.sh":
