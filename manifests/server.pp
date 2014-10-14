@@ -394,6 +394,7 @@ class backuppc::server (
         'no-port-forwarding',
         'no-pty',
         'no-X11-forwarding',
+        "from=\"${::ipaddress}\"",
       ],
       type    => 'ssh-rsa',
       tag     => "backuppc_${::fqdn}",
